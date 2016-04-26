@@ -51,10 +51,6 @@
   (setq elasticsearch-port port)
   (elasticsearch-snapshots-refresh)
   (tabulated-list-init-header)
-  (setq tabulated-list-format
-        '[("Repository" 20 nil)
-          ("Type" 7 nil)
-          ("Settings" 20 nil)])
   (elasticsearch-repositories-mode)
   (tabulated-list-revert))
 
