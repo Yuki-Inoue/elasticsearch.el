@@ -42,4 +42,9 @@
   (elasticsearch-repositories-mode)
   (tabulated-list-revert))
 
+(defvar elasticsearch-keymap
+  (let ((map (make-sparse-keymap)))
+    (define-key map "s" 'elasticsearch-snapshots)
+    map))
+
 (provide 'elasticsearch)
