@@ -2,6 +2,12 @@
 (require 'json)
 (require 'tabulated-list)
 
+(defvar-local elasticsearch-host "localhost"
+  "Host name (or IP) of Elasticsearch.")
+
+(defvar-local Elasticsearch-port 9200
+  "Port of Elasticsearch")
+
 (defun elasticsearch--raw-snapshots (host port)
   (json-read-from-string
    (shell-command-to-string
@@ -25,15 +31,25 @@
           ("Type" 10 nil)
           ("Settings" 20 nil)])
   (setq tabulated-list-padding 2)
+  (add-hook 'tabulated-list-revert-hook 'elasticsearch-snapshots-refresh nil t)
   (tabulated-list-init-header))
+
+(defun elasticsearch-snapshots-refresh ()
+  "Refresh elasticsearch snapshots."
+
+  (setq tabulated-list-entries
+        (elasticsearch-convert-snapshots
+         (elasticsearch--raw-snapshots
+          elasticsearch-host
+          elasticsearch-port))))
 
 (defun elasticsearch-snapshots (host port)
   "List Elasticsearch snapshots."
   (interactive "sHost: \nnPort : ")
   (pop-to-buffer "*elasticsearch-snapshots*")
-  (setq tabulated-list-entries
-        (elasticsearch-convert-snapshots
-         (elasticsearch--raw-snapshots host port)))
+  (setq elasticsearch-host host)
+  (setq elasticsearch-port port)
+  (elasticsearch-snapshots-refresh)
   (tabulated-list-init-header)
   (setq tabulated-list-format
         '[("Repository" 20 nil)
