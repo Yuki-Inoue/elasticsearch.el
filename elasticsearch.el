@@ -7,7 +7,7 @@
    (shell-command-to-string
     (combine-and-quote-strings
      (list "curl" "-s"
-           (concat "http://" host ":" port "/_snapshot"))))))
+           (concat "http://" host ":" (number-to-string port) "/_snapshot"))))))
 
 (defun elasticsearch-convert-snapshots (snapshots)
   (--map
