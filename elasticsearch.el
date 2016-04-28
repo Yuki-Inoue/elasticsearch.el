@@ -20,7 +20,7 @@
 (defvar-local elasticsearch-host "localhost"
   "Host name (or IP) of Elasticsearch.")
 
-(defvar-local Elasticsearch-port 9200
+(defvar-local elasticsearch-port 9200
   "Port of Elasticsearch")
 
 (defun elasticsearch--raw-snapshots (host port)
