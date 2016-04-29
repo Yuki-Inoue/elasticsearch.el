@@ -60,7 +60,9 @@
 
 (defun elasticsearch-snapshots (host port)
   "List Elasticsearch snapshots."
-  (interactive "sHost: \nnPort : ")
+  (interactive (list
+                (read-string "Host: " "localhost")
+                (read-number "Port: " 9200)))
   (pop-to-buffer "*elasticsearch-snapshots*")
   (setq elasticsearch-host host)
   (setq elasticsearch-port port)
