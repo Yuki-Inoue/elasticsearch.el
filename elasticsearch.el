@@ -15,7 +15,7 @@
 
 
 (require 'json)
-(require 'tabulated-list)
+(require 'tablist)
 
 (defvar-local elasticsearch-host "localhost"
   "Host name (or IP) of Elasticsearch.")
@@ -47,7 +47,8 @@
           ("Settings" 20 nil)])
   (setq tabulated-list-padding 2)
   (add-hook 'tabulated-list-revert-hook 'elasticsearch-snapshots-refresh nil t)
-  (tabulated-list-init-header))
+  (tabulated-list-init-header)
+  (tablist-minor-mode))
 
 (defun elasticsearch-snapshots-refresh ()
   "Refresh elasticsearch snapshots."
@@ -65,10 +66,9 @@
                 (read-number "Port: " 9200)))
   (pop-to-buffer "*elasticsearch-snapshots*")
   (elasticsearch-repositories-mode)
-  (tabulated-list-init-header)
   (setq elasticsearch-host host)
   (setq elasticsearch-port port)
-  (tabulated-list-revert))
+  (tablist-revert))
 
 (defvar elasticsearch-keymap
   (let ((map (make-sparse-keymap)))
