@@ -64,11 +64,10 @@
                 (read-string "Host: " "localhost")
                 (read-number "Port: " 9200)))
   (pop-to-buffer "*elasticsearch-snapshots*")
+  (elasticsearch-repositories-mode)
+  (tabulated-list-init-header)
   (setq elasticsearch-host host)
   (setq elasticsearch-port port)
-  (elasticsearch-snapshots-refresh)
-  (tabulated-list-init-header)
-  (elasticsearch-repositories-mode)
   (tabulated-list-revert))
 
 (defvar elasticsearch-keymap
