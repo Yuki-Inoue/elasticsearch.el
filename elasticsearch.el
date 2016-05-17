@@ -23,12 +23,18 @@
 (defvar-local elasticsearch-port 9200
   "Port of Elasticsearch")
 
+(defun elasticsearch-url ()
+  (concat "http://" elasticsearch-host ":"
+          (number-to-string elasticsearch-port) "/_snapshot"))
+
+(defun elasticsearch--raw-command (&rest args)
+  (shell-command-to-string
+    (combine-and-quote-strings args)))
+
 (defun elasticsearch--raw-snapshots (host port)
   (json-read-from-string
-   (shell-command-to-string
-    (combine-and-quote-strings
-     (list "curl" "-s"
-           (concat "http://" host ":" (number-to-string port) "/_snapshot"))))))
+   (elasticsearch--raw-command
+    "curl" "-s" (elasticsearch-url))))
 
 (defun elasticsearch-convert-snapshots (snapshots)
   (--map
@@ -49,6 +55,23 @@
   (add-hook 'tabulated-list-revert-hook 'elasticsearch-snapshots-refresh nil t)
   (tabulated-list-init-header)
   (tablist-minor-mode))
+
+(magit-define-popup elasticsearch-put-snapshot-popup "Snapshots Popup"
+  :actions '((?P "Put Snapshot" elasticsearch-put-snapshot-selection)))
+
+(define-key elasticsearch-repositories-mode-map (kbd "P") 'elasticsearch-put-snapshot-popup)
+
+(defun elasticsearch-put-snapshot-selection (snapshot-name)
+  (interactive "sSnapshot Name : ")
+  (dolist (entry (tablist-get-marked-items))
+    (let ((repository (car entry)))
+      (message
+       (elasticsearch--raw-command
+        "curl" "-s" "-XPUT"
+        (concat (elasticsearch-url)
+                "/" (symbol-name repository)
+                "/es-" (shell-command-to-string "date +%Y-%m-%d-%H-%M-%S")
+                "?wait_for_completion=true&pretty-command"))))))
 
 (defun elasticsearch-snapshots-refresh ()
   "Refresh elasticsearch snapshots."
